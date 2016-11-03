@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokemon GraphicalWeb2016</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background: #F1F1F1;
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas#graphicalweb {
+            width: 550px;
+            height: 550px;
+            background: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="graphicalweb"></canvas>
+
+    <script src="libs/origamijs-latest.min.js"></script>
+    <script>
+        var trainerPos = {
+            pos: 'bottom',
+            x: 100,
+            y: 100,
+            frame: 1
+        };
+
+        origami.createComponent('Background', function(octx, props) {
+            octx.image('images/lab.jpg', 0, 0)
+        })
+
+        origami.createComponent('Trainer', function(octx, props) {
+            octx.sprite(props.x, props.y, {
+                src: 'images/red-charset-' + props.pos + '.png',
+                frames: {
+                    total: 4,
+                    current: Math.round(props.frame)
+                },
+                speed: 100,
+                animation: true
+            })
+        })
+
+        function draw() {
+            origami('#graphicalweb')
+                .clear()
+                .Background()
+                .Trainer(trainerPos)
+                .load(function(octx){
+                    octx.startRender(draw);
+                })
+        }
+
+        draw();
+
+        window.onload = function() {
+            document.addEventListener('keydown', function checkKey(e) {
+                var key = Number(e.keyCode)
+
+                if (key >= 37 && key <= 40) {
+                    if (key === 38) {
+                        trainerPos.y -= 5
+                        trainerPos.pos = 'top'
+                    }
+                    else if (key === 40) {
+                        trainerPos.y += 5
+                        trainerPos.pos = 'bottom'
+                    }
+                    else if (key === 37) {
+                       trainerPos.x -= 5
+                       trainerPos.pos = 'left'
+                    }
+                    else if (key === 39) {
+                       trainerPos.x += 5
+                       trainerPos.pos = 'right'
+                    }
+
+                    trainerPos.frame =
+                        (trainerPos.frame >= 4) ? 1 : (trainerPos.frame + 0.5);
+                }
+            })
+        }
+    </script>
+    <audio loop autoplay>
+      <source src="audio/victory-pokemon.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+</body>
+</html>
